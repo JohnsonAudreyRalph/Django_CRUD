@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% block main %}
+    <div class="row">
+        <div class="col-sm-4">
+            <h4 class="text-center alert alert-info">Thêm thông tin</h4>
+            <form action="" method="post">
+                {% csrf_token %}
+                <p>
+                    <label for="id_name">Name:</label>
+                    <input type="text" name="name" class="form-control" maxlength="100" id="id_name" required>
+                </p>
+                <p>
+                    <label for="id_age">Age:</label>
+                    <input type="text" name="age" class="form-control" id="id_age" required>
+                </p>
+                <p>
+                    <label for="id_gender">Gender:</label>
+                    <select name="gender" class="form-control" id="id_gender" required>
+                    <option value="" selected="">---------</option>
+                    <option value="Nam">Nam</option>
+                    <option value="Nữ">Nữ</option>
+                    <option value="Khác">Khác</option>
+                </select>
+                </p>
+                <input type="submit" value="Add" class="btn btn-success">
+            </form>
+        </div>
+
+        <div class="col-sm-8">
+            <h4 class="text-center alert alert-info">Thông tin sinh viên</h4>
+            <table id="table_id" class="table table-hover" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Age</th>
+                        <th>Gender</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for show in students %}
+                    <tr>
+                        <th>{{forloop.counter}}</th>
+                        <td>{{show.name}}</td>
+                        <td>{{show.age}}</td>
+                        <td>{{show.gender}}</td>
+                        <td>
+                            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#edit-{{show.id}}">
+                                <i class="fa-regular fa-pen-to-square"></i>
+                            </button>
+                            <form action="{% url 'Delete' show.id %}" method="post" class='d-inline'>
+                                {% csrf_token %}
+                                <button class="btn btn-danger btn-sm" type='submit'>
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    {% for i in students %}
+        <form action="/Update/{{i.id}}" method="post">
+            <div class="modal fade" id="edit-{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                {% csrf_token %}
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="exampleModalLabel">Chỉnh sửa thông tin</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <label>Name</label>
+                            <input name="edit_name" value="{{i.name}}" type="text" class="form-control" required>
+                            <label>Age</label>
+                            <input name="edit_age" value="{{i.age}}" type="text" class="form-control" required>
+                            <label>Gender</label>
+                            <input name="edit_gender" value="{{i.gender}}" type="text" class="form-control" required>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Save changes</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    {% endfor %}
+
+    <script>
+        new DataTable('#table_id');
+    </script>
+    
+{% endblock main %}
